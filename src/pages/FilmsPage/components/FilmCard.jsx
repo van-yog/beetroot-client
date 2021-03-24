@@ -1,21 +1,23 @@
 import PropTypes from "prop-types";
+import Featured from "components/Featured";
+import {memo} from "react";
 
 const FilmCard = ({film}) => {
+  const {price, director, img, title, duration} = film;
+
   return (
     <div className="ui card">
-      <span className="ui right corner label">
-        <i className="empty star icon"></i>
-      </span>
+      <Featured film={film} />
       <div className="image">
-        <span className="ui green label ribbon">$ {film.price}</span>
-        <img src={film.img} alt={film.title} />
+        <span className="ui green label ribbon">$ {price}</span>
+        <img src={img} alt={title} />
       </div>
       <div className="content">
-        <span className="header">{film.title}</span>
+        <span className="header">{title}</span>
         <div className="meta">
-          <i className="icon users"></i> {film.director}
+          <i className="icon users"></i> {director}
           <span className="right floated">
-            <i className="icon wait right"></i> {film.duration} min
+            <i className="icon wait right"></i> {duration} min
           </span>
         </div>
       </div>
@@ -45,4 +47,4 @@ FilmCard.propTypes = {
   }),
 };
 
-export default FilmCard;
+export default memo(FilmCard);
