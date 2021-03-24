@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import FilmsList from "pages/FilmsPage/components/FilmsList";
 import FilmContext from "contexts/FilmContext";
-import FilmForm from "pages/FilmsPage/components/FilmForm";
 import {films} from "data";
 import {sortBy, prop, sortWith, descend, ascend} from "ramda";
 
@@ -13,14 +12,6 @@ class App extends Component {
   componentDidMount() {
     this.setState({films});
   }
-
-  onReset = () => this.setState({films});
-
-  sortFilmsRamda = films => {
-    const sort = sortBy(prop("duration"));
-    const sortFilms = sort(films);
-    return sortFilms;
-  };
 
   sortFilms = films => {
     const sortFilms = sortWith([
@@ -39,14 +30,13 @@ class App extends Component {
 
   render() {
     const {films} = this.state;
-    const {sortFilms} = this;
+    const {sortFilms, toggle} = this;
 
     return (
       <div className="ui container mt-3">
-        <FilmForm />
-        {/* <FilmContext.Provider value={this.toggle}>
+        <FilmContext.Provider value={toggle}>
           <FilmsList films={sortFilms(films)} />
-        </FilmContext.Provider> */}
+        </FilmContext.Provider>
       </div>
     );
   }
