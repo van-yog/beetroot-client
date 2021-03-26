@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {genres, tags} from "data";
+import {genres, tags as tagsList} from "data";
 
 class FilmForm extends Component {
   state = {
@@ -9,55 +9,49 @@ class FilmForm extends Component {
     multipleSelect: [],
   };
 
-  componentDidMount() {
-    this.setState({genre: genres});
-  }
+  handleTagsChange = id =>
+    this.setState(({tags}) => ({
+      tags: tags.includes(id) ? tags.filter(x => x !== id) : [...tags, id],
+    }));
 
-  handleTagsChange = ({target}) => {
-    target.checked
-      ? this.setState(x => ({tags: [...x.tags, target.value]}))
-      : this.setState(x => ({
-          tags: x.tags.filter(item => item !== target.value),
-        }));
+  handleGenreChange = genre => this.setState({genre});
+
+  handleSelectChange = e => {
+    const sel = Number(e.target.value);
+    if (sel === -1) {
+      alert("choose genre");
+      return;
+    }
+    this.setState({sel});
   };
 
-  handleGenreChange = ({target}) => this.setState({genre: target.value});
-
-  handleSelectChange = ({target}) => this.setState({sel: target.value});
-
   handleMultiSelect = e => {
-    const arr = [...e.target.selectedOptions];
-    const multipleSelect = [...arr].map(item => item.value);
-
+    const multipleSelect = Array.from(e.target.selectedOptions).map(
+      o => o.value,
+    );
     this.setState({multipleSelect});
   };
 
   render() {
-    const {sel, multipleSelect} = this.state;
-    const {
-      handleTagsChange,
-      handleGenreChange,
-      handleSelectChange,
-      handleMultiSelect,
-    } = this;
+    const {tags, genre, sel, multipleSelect} = this.state;
     return (
       <form className="ui form">
         <div className="ui grid">
           <div className="four wide column">
             {/*  =========================  tags  ================  */}
-            <div className="grouped fields">
+            <div class="grouped fields">
               <label>Tags</label>
               {/* ====== */}
-              {tags.map((item, i) => (
-                <div className="field" key={item._id}>
+              {tagsList.map(tag => (
+                <div key={tag._id} className="field">
                   <div className="ui checkbox field">
                     <input
                       type="checkbox"
-                      id={`tag${i}`}
-                      onChange={handleTagsChange}
-                      value={item.title}
+                      id={`tag-${tag._id}`}
+                      checked={tags.includes(tag._id)}
+                      onChange={() => this.handleTagsChange(tag._id)}
                     />
-                    <label htmlFor={`tag${i}`}> {item.title}</label>
+                    <label htmlFor={`tag-${tag._id}`}>{tag.title}</label>
                   </div>
                 </div>
               ))}
@@ -69,16 +63,16 @@ class FilmForm extends Component {
             <div className="grouped fields">
               <label>Genres</label>
               {/* ====== */}
-              {genres.map((item, i) => (
-                <div key={item._id} className="ui radio checkbox field">
+              {genres.map(gen => (
+                <div key={gen._id} className="ui radio checkbox field">
                   <input
+                    checked={genre === gen._id}
+                    onChange={() => this.handleGenreChange(gen._id)}
                     type="radio"
+                    id={`genre-${gen._id}`}
                     name="example2"
-                    value={item.title}
-                    checked={this.state.genre === item.title ? "checked" : ""}
-                    onChange={handleGenreChange}
                   />
-                  <label htmlFor="example2">{item.title}</label>
+                  <label htmlFor={`genre-${gen._id}`}>{gen.title}</label>
                 </div>
               ))}
               {/* ====== */}
@@ -86,20 +80,31 @@ class FilmForm extends Component {
           </div>
           {/*  ==============================   sel ================  */}
           <div className="four wide column">
-            <select className="ui dropdown" onChange={handleSelectChange}>
-              {genres.map(item => (
-                <option key={item._id} value={item.title}>
-                  {item.title}
+            <select
+              value={sel}
+              onChange={this.handleSelectChange}
+              className="ui dropdown"
+            >
+              <option value="-1">Choose genre</option>
+              {genres.map(gen => (
+                <option key={gen._id} value={gen._id}>
+                  {gen.title}
                 </option>
               ))}
             </select>
           </div>
           {/*  ==============================  multipleSelect ================  */}
+
           <div className="four wide column">
-            <select multiple size="SIZE" onChange={handleMultiSelect}>
-              {genres.map(item => (
-                <option key={item._id} value={item.title}>
-                  {item.title}
+            <select
+              value={multipleSelect}
+              onChange={this.handleMultiSelect}
+              multiple
+              size={genres.length}
+            >
+              {genres.map(gen => (
+                <option key={gen._id} value={gen._id}>
+                  {gen.title}
                 </option>
               ))}
             </select>
